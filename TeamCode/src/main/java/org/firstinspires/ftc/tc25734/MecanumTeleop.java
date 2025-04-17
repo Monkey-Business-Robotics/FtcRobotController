@@ -3,31 +3,13 @@ package org.firstinspires.ftc.tc25734;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Servo.Direction;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.tc25734.MechanumDriveClass;
-import org.firstinspires.ftc.tc25734.ClawSystemClass;
-//import org.firstinspires.ftc.tc25734.ArmControl;
+@TeleOp(name = "Standard Teleop", group = "Linear Opmode")
+public class MecanumTeleop extends LinearOpMode {
 
-@TeleOp(name = "Mechanum Drive", group = "Linear Opmode")
-public class TeleopMechanum extends LinearOpMode {
-    private DcMotor slider;
-    private Servo miniArm;
-
-    private static final int SLIDER_HIGH_BAR_POSITION = 720;
-    private static final int SLIDER_MIN = 0; // 1000~=2in
-    private static final int SLIDER_MAX = 19000;
-
-    private DcMotor armMotorA;
-    private DcMotor armMotorB;
+    private DcMotor armMotor;
 
     // PID coefficients
     private static final double kP = .0005;  // Proportional gain
@@ -35,30 +17,33 @@ public class TeleopMechanum extends LinearOpMode {
     private static final double kD = 0;  // Derivative gain
     private static final double tolerance = 1;
 
+    // PID state
     private double integralSum = 0;
     private double previousError = 0;
     double error = 0;
 
     // Arm position constants
-    private static final int ARM_POSITION_MIN = 0;
     private static final int ARM_POSITION_MID = 1350;
     private static final int ARM_POSITION_HOLD = 2700;
     private static final int ARM_POSITION_PICKUP = 3025;
     private static final int ARM_POSITION_MAX = 3400;
 
+    // Slider position constants
+    private static final int SLIDER_MIN = 0; // 1000~=2in
+    private static final int SLIDER_MAX = 19000;
+
     @Override
     public void runOpMode() {
-        slider = hardwareMap.get(DcMotor.class, "slider");
+        DcMotor slider = hardwareMap.get(DcMotor.class, "slider");
 
         // Initialize the wrist motor
-        armMotorA = hardwareMap.get(DcMotor.class, "wrist_a");
-        armMotorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotorA.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotorB = hardwareMap.get(DcMotor.class, "wrist_b");
+        armMotor = hardwareMap.get(DcMotor.class, "wrist_a");
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // initialize the autonomous bar touching servo motor
-        miniArm = hardwareMap.get(Servo.class, "mini_arm");
+        Servo miniArm = hardwareMap.get(Servo.class, "mini_arm");
         miniArm.setDirection(Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
@@ -77,21 +62,16 @@ public class TeleopMechanum extends LinearOpMode {
         slider.setDirection(DcMotor.Direction.FORWARD);
 
         ClawSystemClass clawDriver = new ClawSystemClass(hardwareMap, telemetry);
-        MechanumDriveClass mechanumDrive = new MechanumDriveClass(hardwareMap, telemetry, this);
-        mechanumDrive.setMode(0);
-        int sliderPosition = 0;
-        Boolean clawOpen = false;
-        //Boolean pivotDown = false;
-        Boolean button_a_released = true;
-        //Boolean button_b_released = true;
-        //Boolean button_x_released = true;
+        MecanumDriver mecanumDriver = new MecanumDriver(hardwareMap, telemetry, this);
+        mecanumDriver.setMode(0);
+        int sliderPosition;
+        boolean clawOpen = false;
+        boolean button_a_released = true;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double powerScale = gamepad1.right_bumper ? 1.0  : (gamepad1.left_bumper ? 0.5 : .75); //Check if the right bumper is held
-
-            mechanumDrive.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, powerScale);
-            //clawDriver.moveWrist((gamepad2.right_stick_y / 1.7) * (0.62 * Math.pow(gamepad2.right_stick_y, 2) + 0.45));
+            mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, powerScale);
 
             double power = -gamepad2.left_stick_y;
             sliderPosition = slider.getCurrentPosition();
@@ -141,20 +121,19 @@ public class TeleopMechanum extends LinearOpMode {
             }
 
             // Apply PID control to move the arm to the target position
-            double powerWrist = calculatePID((int) targetPositionWrist, -armMotorA.getCurrentPosition());
-            armMotorA.setPower(-powerWrist);
-            armMotorB.setPower(powerWrist);
+            double powerWrist = calculatePID((int) targetPositionWrist, -armMotor.getCurrentPosition());
+            armMotor.setPower(-powerWrist);
 
             // Telemetry for debugging
             telemetry.addData("Target Position",targetPositionWrist);
-            telemetry.addData("Current Position", -armMotorA.getCurrentPosition());
+            telemetry.addData("Current Position", -armMotor.getCurrentPosition());
             //telemetry.addData("Motor Power", power);
         }
     }
 
     private double calculatePID(int targetPosition, int currentPosition) {
         // Calculate error
-        error = targetPosition - Math.abs(armMotorA.getCurrentPosition());
+        error = targetPosition - Math.abs(armMotor.getCurrentPosition());
 
         // Proportional term
         double proportional = kP * error;

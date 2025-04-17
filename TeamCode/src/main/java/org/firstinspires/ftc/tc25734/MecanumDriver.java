@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.tc25734;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class MechanumDriveClass {
+public class MecanumDriver {
 
-    private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private final LinearOpMode opmode;
 
@@ -18,14 +16,12 @@ public class MechanumDriveClass {
     private final DcMotor fr_motor;
     private final DcMotor br_motor;
 
-    private static final double AUTO_POWER = 0.2;
     private static final int WHEEL_BASE_MM = 520;
     private static final int TICKS_PER_REV = 28 * 20; // Motor * Ratio
     private static final double WHEEL_DIAMETER = 75;  // Wheel Diameter
     private static final double TICKS_PER_MM = (TICKS_PER_REV) / (Math.PI * WHEEL_DIAMETER);
 
-    public MechanumDriveClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
-        this.hardwareMap = hardwareMap;
+    public MecanumDriver(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
         this.telemetry = telemetry;
         this.opmode = opmode;
 
