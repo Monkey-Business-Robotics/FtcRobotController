@@ -11,15 +11,23 @@ public class MechanumDriveClass {
 
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
+    private final LinearOpMode opmode;
 
     private final DcMotor fl_motor;
     private final DcMotor bl_motor;
     private final DcMotor fr_motor;
     private final DcMotor br_motor;
 
-    public MechanumDriveClass(HardwareMap hardwareMap, Telemetry telemetry) {
+    private static final double AUTO_POWER = 0.2;
+    private static final int WHEEL_BASE_MM = 520;
+    private static final int TICKS_PER_REV = 28 * 20; // Motor * Ratio
+    private static final double WHEEL_DIAMETER = 75;  // Wheel Diameter
+    private static final double TICKS_PER_MM = (TICKS_PER_REV) / (Math.PI * WHEEL_DIAMETER);
+
+    public MechanumDriveClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+        this.opmode = opmode;
 
         // Initialize motors
         fl_motor = hardwareMap.get(DcMotor.class, "fl_motor");
@@ -47,14 +55,111 @@ public class MechanumDriveClass {
             fr_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             br_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } else if (mode == 1) {
-            fl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            bl_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            fr_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            br_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            stop_motors();
+            fl_motor.setTargetPosition(0);
+            bl_motor.setTargetPosition(0);
+            fr_motor.setTargetPosition(0);
+            br_motor.setTargetPosition(0);
+
+            fl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            bl_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            fr_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            br_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 
-    public void runByPower(double x, double y, double r) {
+    public void moveY(double d, double p) {
+        // d = distance, p = power/speed
+        d = -d;
+        int fl_target = fl_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+        int bl_target = bl_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+        int fr_target = fr_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+        int br_target = br_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+
+        fl_motor.setTargetPosition(fl_target);
+        bl_motor.setTargetPosition(bl_target);
+        fr_motor.setTargetPosition(fr_target);
+        br_motor.setTargetPosition(br_target);
+        fl_motor.setPower(p);
+        bl_motor.setPower(p);
+        fr_motor.setPower(p);
+        br_motor.setPower(p);
+
+        while (opmode.opModeIsActive() && (fl_motor.isBusy() || fr_motor.isBusy() || bl_motor.isBusy() || br_motor.isBusy())) {
+            telemetry.addData("FL: ", fl_motor.getCurrentPosition());
+            telemetry.addData("FR: ", fr_motor.getCurrentPosition());
+            telemetry.addData("BL: ", bl_motor.getCurrentPosition());
+            telemetry.addData("BR: ", br_motor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        stop_motors();
+    }
+
+    public void moveX(double d, double p) {
+        d = -d;
+        int fl_target = fl_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+        int bl_target = bl_motor.getCurrentPosition() - (int) (d * TICKS_PER_MM);
+        int fr_target = fr_motor.getCurrentPosition() - (int) (d * TICKS_PER_MM);
+        int br_target = br_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+
+        fl_motor.setTargetPosition(fl_target);
+        bl_motor.setTargetPosition(bl_target);
+        fr_motor.setTargetPosition(fr_target);
+        br_motor.setTargetPosition(br_target);
+        fl_motor.setPower(p);
+        bl_motor.setPower(p);
+        fr_motor.setPower(p);
+        br_motor.setPower(p);
+
+        while (opmode.opModeIsActive() && (fl_motor.isBusy() || fr_motor.isBusy() || bl_motor.isBusy() || br_motor.isBusy())) {
+            telemetry.addData("FL: ", fl_motor.getCurrentPosition());
+            telemetry.addData("FR: ", fr_motor.getCurrentPosition());
+            telemetry.addData("BL: ", bl_motor.getCurrentPosition());
+            telemetry.addData("BR: ", br_motor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        stop_motors();
+    }
+
+    public void rotate(double a, double p) {
+        double d = (a / 360) * WHEEL_BASE_MM;
+        d = -d;
+
+        int fl_target = fl_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+        int bl_target = bl_motor.getCurrentPosition() - (int) (d * TICKS_PER_MM);
+        int fr_target = fr_motor.getCurrentPosition() + (int) (d * TICKS_PER_MM);
+        int br_target = br_motor.getCurrentPosition() - (int) (d * TICKS_PER_MM);
+
+        fl_motor.setTargetPosition(fl_target);
+        bl_motor.setTargetPosition(bl_target);
+        fr_motor.setTargetPosition(fr_target);
+        br_motor.setTargetPosition(br_target);
+        fl_motor.setPower(p);
+        bl_motor.setPower(p);
+        fr_motor.setPower(p);
+        br_motor.setPower(p);
+
+        while (opmode.opModeIsActive() && (fl_motor.isBusy() || fr_motor.isBusy() || bl_motor.isBusy() || br_motor.isBusy())) {
+            telemetry.addData("FL: ", fl_motor.getCurrentPosition());
+            telemetry.addData("FR: ", fr_motor.getCurrentPosition());
+            telemetry.addData("BL: ", bl_motor.getCurrentPosition());
+            telemetry.addData("BR: ", br_motor.getCurrentPosition());
+            telemetry.update();
+        }
+
+        stop_motors();
+    }
+
+    public void stop_motors() {
+        fl_motor.setPower(0);
+        fr_motor.setPower(0);
+        bl_motor.setPower(0);
+        br_motor.setPower(0);
+    }
+
+    public void runByPower(double x, double y, double r, double powerScale) {
         // Reverse y for joystick direction
         //y = -y;
         x = -x;
@@ -62,19 +167,19 @@ public class MechanumDriveClass {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(r), .75);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(r), 1);
         double frontLeftPower = (y + x + r) / denominator;
         double backLeftPower = (y - x + r) / denominator;
         double frontRightPower = (y - x - r) / denominator;
         double backRightPower = (y + x - r) / denominator;
-        
-        // Scale down power by 0.75 (reduce power by 25%)
-        double powerscale = 0.75;
-        frontLeftPower *= powerscale;
-        backLeftPower *= powerscale;
-        frontRightPower *= powerscale;
-        backRightPower *= powerscale;
-        
+
+        // Scale down power and up power
+
+        frontLeftPower *= powerScale;
+        backLeftPower *= powerScale;
+        frontRightPower *= powerScale;
+        backRightPower *= powerScale;
+
         // Set motor powers
         fl_motor.setPower(frontLeftPower);
         bl_motor.setPower(backLeftPower);
