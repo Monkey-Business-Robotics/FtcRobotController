@@ -35,7 +35,7 @@ public class MecanumDriver {
         fl_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         bl_motor.setDirection(DcMotorSimple.Direction.FORWARD);
         fr_motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        br_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        br_motor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void setMode(int mode) {

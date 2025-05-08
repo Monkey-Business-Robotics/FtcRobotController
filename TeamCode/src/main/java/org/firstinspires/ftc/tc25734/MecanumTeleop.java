@@ -28,40 +28,36 @@ public class MecanumTeleop extends LinearOpMode {
     private static final int ARM_POSITION_PICKUP = 3025;
     private static final int ARM_POSITION_MAX = 3400;
 
-    // Slider position constants
-    private static final int SLIDER_MIN = 0; // 1000~=2in
-    private static final int SLIDER_MAX = 19000;
-
     @Override
     public void runOpMode() {
-        DcMotor slider = hardwareMap.get(DcMotor.class, "slider");
+//        DcMotor slider = hardwareMap.get(DcMotor.class, "slider");
 
         // Initialize the wrist motor
-        armMotor = hardwareMap.get(DcMotor.class, "wrist_a");
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        armMotor = hardwareMap.get(DcMotor.class, "wrist_a");
+//        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // initialize the autonomous bar touching servo motor
-        Servo miniArm = hardwareMap.get(Servo.class, "mini_arm");
-        miniArm.setDirection(Direction.REVERSE);
+//        Servo miniArm = hardwareMap.get(Servo.class, "mini_arm");
+//        miniArm.setDirection(Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
-        miniArm.setPosition(0);
+//        miniArm.setPosition(0);
 
         double targetPositionWrist = 0;  // Start position wrist
-        slider.setTargetPosition(0);
-        slider.setPower(0);
-        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slider.setDirection(DcMotor.Direction.FORWARD);
+//        slider.setTargetPosition(0);
+//        slider.setPower(0);
+//        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        slider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        slider.setDirection(DcMotor.Direction.FORWARD);
 
-        ClawSystemClass clawDriver = new ClawSystemClass(hardwareMap, telemetry);
+//        ClawSystemClass clawDriver = new ClawSystemClass(hardwareMap, telemetry);
         MecanumDriver mecanumDriver = new MecanumDriver(hardwareMap, telemetry, this);
         mecanumDriver.setMode(0);
         int sliderPosition;
@@ -74,15 +70,15 @@ public class MecanumTeleop extends LinearOpMode {
             mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, powerScale);
 
             double power = -gamepad2.left_stick_y;
-            sliderPosition = slider.getCurrentPosition();
-            if ((sliderPosition <= SLIDER_MIN) && power < 0) {
-                power = 0;
-            }
-            if ((sliderPosition >= SLIDER_MAX) && power > 0) {
-                power = 0;
-            }
-            telemetry.addData("slider position", sliderPosition);
-            slider.setPower(power);
+//            sliderPosition = slider.getCurrentPosition();
+//            if ((sliderPosition <= SLIDER_MIN) && power < 0) {
+//                power = 0;
+//            }
+//            if ((sliderPosition >= SLIDER_MAX) && power > 0) {
+//                power = 0;
+//            }
+//            telemetry.addData("slider position", sliderPosition);
+//            slider.setPower(power);
 
             if (gamepad2.a && button_a_released) {
                 clawOpen = !clawOpen;
@@ -90,43 +86,43 @@ public class MecanumTeleop extends LinearOpMode {
             } else if (!gamepad2.a) {
                 button_a_released = true;
             }
-            clawDriver.setClawOpen(clawOpen);
+//            clawDriver.setClawOpen(clawOpen);
 
             telemetry.addData("Status", "Running");
             telemetry.update();
 
             // Control the arm motor
             // Set target position based on gamepad buttons and reset encoders
-            if (gamepad2.b) {
-                targetPositionWrist = ARM_POSITION_MID;
-            }
-            if (gamepad2.y) {
-                targetPositionWrist = ARM_POSITION_HOLD;
-            }
-            if (gamepad2.right_bumper){
-                targetPositionWrist = ARM_POSITION_PICKUP;
-            }
-            if (gamepad2.right_stick_y >0){
-                targetPositionWrist += gamepad2.right_stick_y * 10;
-            } else if (gamepad2.right_stick_y <0){
-                targetPositionWrist += gamepad2.right_stick_y * 10;
-            }
+//            if (gamepad2.b) {
+//                targetPositionWrist = ARM_POSITION_MID;
+//            }
+//            if (gamepad2.y) {
+//                targetPositionWrist = ARM_POSITION_HOLD;
+//            }
+//            if (gamepad2.right_bumper){
+//                targetPositionWrist = ARM_POSITION_PICKUP;
+//            }
+//            if (gamepad2.right_stick_y >0){
+//                targetPositionWrist += gamepad2.right_stick_y * 10;
+//            } else if (gamepad2.right_stick_y <0){
+//                targetPositionWrist += gamepad2.right_stick_y * 10;
+//            }
 
             // Limit the range of motion
-            if (targetPositionWrist < 0) {
-                targetPositionWrist = 0;
-            }
-            if (targetPositionWrist > ARM_POSITION_MAX) {
-                targetPositionWrist = ARM_POSITION_MAX;
-            }
+//            if (targetPositionWrist < 0) {
+//                targetPositionWrist = 0;
+//            }
+//            if (targetPositionWrist > ARM_POSITION_MAX) {
+//                targetPositionWrist = ARM_POSITION_MAX;
+//            }
 
             // Apply PID control to move the arm to the target position
-            double powerWrist = calculatePID((int) targetPositionWrist, -armMotor.getCurrentPosition());
-            armMotor.setPower(-powerWrist);
+//            double powerWrist = calculatePID((int) targetPositionWrist, -armMotor.getCurrentPosition());
+//            armMotor.setPower(-powerWrist);
 
             // Telemetry for debugging
             telemetry.addData("Target Position",targetPositionWrist);
-            telemetry.addData("Current Position", -armMotor.getCurrentPosition());
+//            telemetry.addData("Current Position", -armMotor.getCurrentPosition());
             //telemetry.addData("Motor Power", power);
         }
     }
