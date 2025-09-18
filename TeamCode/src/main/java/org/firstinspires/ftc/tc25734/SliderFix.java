@@ -5,31 +5,33 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Slider Fix", group="Linear Opmode")
 public class SliderFix extends LinearOpMode {
+    private DcMotor slider;
+    private DcMotor wrist_a;
+
+
 
     @Override
     public void runOpMode() {
-        DcMotor slider = hardwareMap.get(DcMotor.class, "slider");
+        slider = hardwareMap.get(DcMotor.class, "slider");
+        wrist_a = hardwareMap.get(DcMotor.class, "wrist_a");
+
+        slider.setPower(0);
+        wrist_a.setPower(0);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        slider.setTargetPosition(0);
-        slider.setPower(1);
-        slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slider.setDirection(DcMotor.Direction.FORWARD);
 
-        int sliderPosition;
+        slider.setPower(-1.0);
+        wrist_a.setPower(1.0);
 
-        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double power = -gamepad2.left_stick_y;
-            sliderPosition = slider.getCurrentPosition();
-            telemetry.addData("slider position", sliderPosition);
-            slider.setPower(power);
+
+
+
+
 
             telemetry.addData("Status", "Running");
             telemetry.update();
