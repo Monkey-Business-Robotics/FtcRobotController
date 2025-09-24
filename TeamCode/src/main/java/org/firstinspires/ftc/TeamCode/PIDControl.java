@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.tc25734;
+package org.firstinspires.ftc.TeamCode;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
@@ -19,7 +19,12 @@ public class PIDControl {
         this.tolerance = tolerance;
     }
 
-    private double calculatePID(int targetPosition, int currentPosition) {
+    public void reset() {
+        this.prevError = 0;
+        this.integralSum = 0;
+    }
+
+    public double update(double targetPosition, double currentPosition) {
         // Calculate error
         double error = targetPosition - Math.abs(currentPosition);
 
