@@ -26,7 +26,8 @@ public class PIDControl {
 
     public double update(double targetPosition, double currentPosition) {
         // Calculate error
-        double error = targetPosition - Math.abs(currentPosition);
+//        double error = targetPosition - Math.abs(currentPosition);
+        double error = currentPosition;
 
         // Proportional term
         double proportional = PID.p * error;
@@ -42,10 +43,10 @@ public class PIDControl {
         // Combine PID terms
         double output = proportional + integral + derivativeTerm;
 
-        double distanceToTarget = Math.abs(error);
-        if (distanceToTarget < 2 * this.tolerance) {
-            output *=distanceToTarget / 10 * this.tolerance;
-        }
+//        double distanceToTarget = Math.abs(error);
+//        if (distanceToTarget < 2 * this.tolerance) {
+//            output *=distanceToTarget / 10 * this.tolerance;
+//        }
 
         // Clamp output to valid motor power range [-1, 1]
         output = Math.max(-1, Math.min(1, output));
