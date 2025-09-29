@@ -31,7 +31,7 @@ public class MecanumTeleop extends LinearOpMode {
         /*
          * Set up the target lock on PID loop
          */
-        PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.04, 0.0001, 0);
+        PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.04, 0, 0.01);
         PIDControl targetLockPID = new PIDControl(targetLockPIDCoeff, 0.1);
 
         // run until the end of the match (driver presses STOP)
