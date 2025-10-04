@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.TeamCode;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
+@Configurable
 @TeleOp(name = "Standard Teleop", group = "Linear Opmode")
 public class MecanumTeleop extends LinearOpMode {
+
+    public static PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.028, 0.00075, 0.02);
 
     @Override
     public void runOpMode() {
@@ -31,7 +35,6 @@ public class MecanumTeleop extends LinearOpMode {
         /*
          * Set up the target lock on PID loop
          */
-        PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.04, 0, 0.01);
         PIDControl targetLockPID = new PIDControl(targetLockPIDCoeff, 0.1);
 
         // run until the end of the match (driver presses STOP)
@@ -48,10 +51,10 @@ public class MecanumTeleop extends LinearOpMode {
 //            double powerScale = gamepad1.right_bumper ? 1.0  : (gamepad1.left_bumper ? 0.5 : 1); //Check if the right bumper is held
             if (gamepad1.a) {
                 double rotation = targetLockPID.update(0, result.getTx());
-                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, rotation, 1);
+                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -rotation, 1);
             } else {
                 targetLockPID.reset();
-                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 1);
+                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, 1);
             }
 
             telemetry.addData("Status", "Running");
