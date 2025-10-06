@@ -33,6 +33,11 @@ public class MecanumTeleop extends LinearOpMode {
         limelight.start();
 
         /*
+         * Configure the launcher
+         */
+        Launcher launcher = new Launcher(hardwareMap, telemetry);
+
+        /*
          * Set up the target lock on PID loop
          */
         PIDControl targetLockPID = new PIDControl(targetLockPIDCoeff, 0.1);
@@ -55,6 +60,14 @@ public class MecanumTeleop extends LinearOpMode {
             } else {
                 targetLockPID.reset();
                 mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, 1);
+            }
+
+            if (gamepad1.b) {
+                launcher.readyLaunchFar();
+            }
+
+            if (gamepad1.x) {
+                launcher.launchIfReady();
             }
 
             telemetry.addData("Status", "Running");
