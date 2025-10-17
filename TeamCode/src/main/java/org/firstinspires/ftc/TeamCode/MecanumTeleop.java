@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @TeleOp(name = "Standard Teleop", group = "Linear Opmode")
 public class MecanumTeleop extends LinearOpMode {
 
-    public static PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.028, 0.00075, 0.02);
+    public static PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.028, 0.00074, 0.035);
 
     @Override
     public void runOpMode() {
@@ -68,6 +68,8 @@ public class MecanumTeleop extends LinearOpMode {
 
             if (gamepad1.x) {
                 launcher.launchIfReady();
+            } else {
+                launcher.reset();
             }
 
             telemetry.addData("Status", "Running");
