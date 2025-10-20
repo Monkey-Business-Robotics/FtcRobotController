@@ -15,11 +15,11 @@ public class Launcher {
 
     Telemetry telemetry;
 
-    public static double LAUNCH_SPEED_FAR = 0.83;
+    public static double LAUNCH_SPEED_FAR = 0.80;
     public static double LAUNCH_SPEED_CLOSE = 0.40;
 
     public static double LAUNCH_ANGLE_CLOSE = 0;
-    public static double LAUNCH_ANGLE_FAR = 0;
+    public static double LAUNCH_ANGLE_FAR = 0.6;
 
     public Launcher(HardwareMap hardwareMap, Telemetry telemetry) {
         launcher_a = hardwareMap.get(DcMotor.class, "launch_a");
@@ -56,6 +56,6 @@ public class Launcher {
     }
 
     public void reset() {
-        loading_servo.setPosition(120);
+        loading_servo.setPosition(1);
     }
 }

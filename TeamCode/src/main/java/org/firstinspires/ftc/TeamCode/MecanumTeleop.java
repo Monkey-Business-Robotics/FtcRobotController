@@ -55,18 +55,20 @@ public class MecanumTeleop extends LinearOpMode {
              */
 //            double powerScale = gamepad1.right_bumper ? 1.0  : (gamepad1.left_bumper ? 0.5 : 1); //Check if the right bumper is held
             if (gamepad1.a) {
-                double rotation = targetLockPID.update(0, result.getTx());
-                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -rotation, 1);
+                double rotation = targetLockPID.update(-10, result.getTx());
+                mecanumDriver.runByPower(gamepad1.left_stick_x * 0.75, gamepad1.left_stick_y * 0.75, -rotation, 1);
             } else {
                 targetLockPID.reset();
                 mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, 1);
             }
 
-            if (gamepad1.b) {
+            if (gamepad1.left_bumper) {
                 launcher.readyLaunchFar();
+            } else {
+                launcher.stop();
             }
 
-            if (gamepad1.x) {
+            if (gamepad1.right_bumper) {
                 launcher.launchIfReady();
             } else {
                 launcher.reset();
