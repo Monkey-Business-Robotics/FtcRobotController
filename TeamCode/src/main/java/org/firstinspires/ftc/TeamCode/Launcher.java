@@ -15,7 +15,7 @@ public class Launcher {
 
     Telemetry telemetry;
 
-    public static double LAUNCH_SPEED_FAR = 0.80;
+    public static double LAUNCH_SPEED_FAR = 0.75;
     public static double LAUNCH_SPEED_CLOSE = 0.40;
 
     public static double LAUNCH_ANGLE_CLOSE = 0;
@@ -52,7 +52,7 @@ public class Launcher {
 
     public void launchIfReady() {
         // move loading servo to launch position then back
-        loading_servo.setPosition(0.5);
+        loading_servo.setPosition(0.3);
     }
 
     public void reset() {

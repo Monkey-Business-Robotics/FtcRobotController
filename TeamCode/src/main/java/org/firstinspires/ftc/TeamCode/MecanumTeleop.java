@@ -42,6 +42,8 @@ public class MecanumTeleop extends LinearOpMode {
          */
         PIDControl targetLockPID = new PIDControl(targetLockPIDCoeff, 0.1);
 
+        float speed_mult = 0.75f;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             // Get the latest limelight result for use in target lock
@@ -56,10 +58,13 @@ public class MecanumTeleop extends LinearOpMode {
 //            double powerScale = gamepad1.right_bumper ? 1.0  : (gamepad1.left_bumper ? 0.5 : 1); //Check if the right bumper is held
             if (gamepad1.a) {
                 double rotation = targetLockPID.update(-10, result.getTx());
-                mecanumDriver.runByPower(gamepad1.left_stick_x * 0.75, gamepad1.left_stick_y * 0.75, -rotation, 1);
+                mecanumDriver.runByPower(
+                        gamepad1.left_stick_x * speed_mult,
+                        gamepad1.left_stick_y * speed_mult,
+                        -rotation, 1);
             } else {
                 targetLockPID.reset();
-                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, 1);
+                mecanumDriver.runByPower(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, speed_mult);
             }
 
             if (gamepad1.left_bumper) {
@@ -72,6 +77,14 @@ public class MecanumTeleop extends LinearOpMode {
                 launcher.launchIfReady();
             } else {
                 launcher.reset();
+            }
+
+            if (gamepad1.left_trigger > 0.1) {
+                speed_mult = 1;
+            } else if (gamepad1.right_trigger > 0.1) {
+                speed_mult = 0.25f;
+            } else {
+                speed_mult = 0.75f;
             }
 
             telemetry.addData("Status", "Running");

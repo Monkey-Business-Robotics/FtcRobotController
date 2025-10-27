@@ -24,7 +24,7 @@ public class TestbedLauncher extends LinearOpMode {
         if (isStopRequested()) return;
 
         // Run at full power when match starts
-        motor.setPower(.80);
+        motor.setPower(1);
         telemetry.addLine("Motor running");
         telemetry.update();
 
