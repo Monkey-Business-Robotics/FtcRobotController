@@ -27,7 +27,7 @@ public class PIDControl {
     public double update(double targetPosition, double currentPosition) {
         // Calculate error
 //        double error = targetPosition - Math.abs(currentPosition);
-        double error = currentPosition;
+        double error = currentPosition - targetPosition;
 
         // Proportional term
         double proportional = PID.p * error;

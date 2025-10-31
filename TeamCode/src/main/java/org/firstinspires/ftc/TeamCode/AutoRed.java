@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 
@@ -15,7 +14,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 @Autonomous(name = "Red", group = "Linear Opmode")
 public class AutoRed extends LinearOpMode {
 
-    public static PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.028, 0.00074, 0.035);
+    public static PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.020, 0.00074, 0.035);
 
     @Override
     public void runOpMode() {
@@ -46,13 +45,16 @@ public class AutoRed extends LinearOpMode {
          */
         PIDControl targetLockPID = new PIDControl(targetLockPIDCoeff, 0.1);
 
-        mecanumDriver.moveX(-35, 0.5);
+        mecanumDriver.moveY(35, 0.5);
 
         mecanumDriver.setMode(0);
         LLResult result = limelight.getLatestResult();
-        while(abs(result.getTx()) > 1) {
+        double pid = 10, filtered_tx = result.getTx();
+        while((abs(pid) > 0.1 || abs(filtered_tx + 3.5) > 0.05) && opModeIsActive()) {
             result = limelight.getLatestResult();
-            double pid = targetLockPID.update(0, result.getTx());
+            filtered_tx += result.getTx();
+            filtered_tx /= 2;
+            pid = targetLockPID.update(0, result.getTx() + 3.5);
             mecanumDriver.runByPower(0, 0, -pid, 1);
         }
         mecanumDriver.runByPower(0, 0, 0, 0);
@@ -60,24 +62,25 @@ public class AutoRed extends LinearOpMode {
         mecanumDriver.setMode(1);
 
         launcher.readyLaunchFar();
-        sleep(1000);
+        sleep(4000);
         launcher.launchIfReady();
         sleep(1000);
         launcher.reset();
-        sleep(1000);
+        sleep(2000);
         launcher.launchIfReady();
         sleep(1000);
         launcher.reset();
-        sleep(1000);
+        sleep(2000);
         launcher.launchIfReady();
         sleep(1000);
         launcher.reset();
-        sleep(1000);
+        sleep(2000);
         launcher.launchIfReady();
         sleep(1000);
         launcher.stop();
         launcher.reset();
 
-        mecanumDriver.moveX(-250, 0.5);
+        mecanumDriver.moveY(300, 0.5);
+        sleep(2000);
     }
 }

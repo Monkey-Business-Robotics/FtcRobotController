@@ -15,7 +15,7 @@ public class Launcher {
 
     Telemetry telemetry;
 
-    public static double LAUNCH_SPEED_FAR = 0.75;
+    public static double LAUNCH_SPEED_FAR = 0.697;
     public static double LAUNCH_SPEED_CLOSE = 0.40;
 
     public static double LAUNCH_ANGLE_CLOSE = 0;

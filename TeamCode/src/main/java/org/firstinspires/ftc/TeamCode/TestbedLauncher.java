@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode; // make sure this matches your folder path
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Testbed Launcher", group = "Linear Opmode")
+@Disabled
 public class TestbedLauncher extends LinearOpMode {
 
     private DcMotor motor;
