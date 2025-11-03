@@ -73,10 +73,6 @@ public class AutoRed extends LinearOpMode {
         sleep(2000);
         launcher.launchIfReady();
         sleep(1000);
-        launcher.reset();
-        sleep(2000);
-        launcher.launchIfReady();
-        sleep(1000);
         launcher.stop();
         launcher.reset();
 

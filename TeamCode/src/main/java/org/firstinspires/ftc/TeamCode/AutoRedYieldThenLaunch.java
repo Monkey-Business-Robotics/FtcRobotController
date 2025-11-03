@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 
 @Configurable
-@Autonomous(name = "Blue", group = "Linear Opmode")
-public class AutoBlue extends LinearOpMode {
+@Autonomous(name = "Red Yield Then Launch", group = "Linear Opmode")
+public class AutoRedYieldThenLaunch extends LinearOpMode {
 
     public static PIDCoefficients targetLockPIDCoeff = new PIDCoefficients(0.020, 0.00074, 0.035);
 
@@ -45,16 +45,19 @@ public class AutoBlue extends LinearOpMode {
          */
         PIDControl targetLockPID = new PIDControl(targetLockPIDCoeff, 0.1);
 
-        mecanumDriver.moveY(35, 0.5);
+//        mecanumDriver.moveY(35, 0.5);
+        mecanumDriver.moveX(250, 0.5);
+        sleep(8000);
+        mecanumDriver.moveX(-300, 0.5);
 
         mecanumDriver.setMode(0);
         LLResult result = limelight.getLatestResult();
         double pid = 10, filtered_tx = result.getTx();
-        while((abs(pid) > 0.1 || abs(filtered_tx - 3.5) > 0.05) && opModeIsActive()) {
+        while((abs(pid) > 0.1 || abs(filtered_tx + 3.5) > 0.05) && opModeIsActive()) {
             result = limelight.getLatestResult();
             filtered_tx += result.getTx();
             filtered_tx /= 2;
-            pid = targetLockPID.update(0, result.getTx() - 3.5);
+            pid = targetLockPID.update(0, result.getTx() + 3.5);
             mecanumDriver.runByPower(0, 0, -pid, 1);
         }
         mecanumDriver.runByPower(0, 0, 0, 0);
@@ -76,7 +79,7 @@ public class AutoBlue extends LinearOpMode {
         launcher.stop();
         launcher.reset();
 
-        mecanumDriver.moveY(300, 0.5);
-        sleep(1000);
+        mecanumDriver.moveX(300, 0.5);
+        sleep(2000);
     }
 }
