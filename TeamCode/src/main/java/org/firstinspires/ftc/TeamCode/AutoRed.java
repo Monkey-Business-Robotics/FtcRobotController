@@ -32,7 +32,7 @@ public class AutoRed extends LinearOpMode {
          * Configure the limelight & enable pipeline 0
          */
         Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(3);
         limelight.start();
 
         /*
@@ -50,18 +50,18 @@ public class AutoRed extends LinearOpMode {
         mecanumDriver.setMode(0);
         LLResult result = limelight.getLatestResult();
         double pid = 10, filtered_tx = result.getTx();
-        while((abs(pid) > 0.1 || abs(filtered_tx + 3.5) > 0.05) && opModeIsActive()) {
+        while((abs(pid) > 0.1 || abs(filtered_tx) > 0.05) && opModeIsActive()) {
             result = limelight.getLatestResult();
             filtered_tx += result.getTx();
             filtered_tx /= 2;
-            pid = targetLockPID.update(0, result.getTx() + 3.5);
+            pid = targetLockPID.update(0, result.getTx());
             mecanumDriver.runByPower(0, 0, -pid, 1);
         }
         mecanumDriver.runByPower(0, 0, 0, 0);
         targetLockPID.reset();
         mecanumDriver.setMode(1);
 
-        launcher.readyLaunchFar();
+        launcher.readyLaunch(3.5);
         sleep(4000);
         launcher.launchIfReady();
         sleep(1000);
